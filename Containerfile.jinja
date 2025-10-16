@@ -1,0 +1,48 @@
+# --- Base image Python slim ---
+FROM python:3.11-slim
+
+# --- Installazione dipendenze di sistema (layer separato per caching) ---
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        libzstd-dev \
+        libsnappy-dev \
+        sqlite3 \
+        libsqlite3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# --- Aggiorna pip subito ---
+RUN python -m pip install --upgrade pip setuptools wheel
+
+# --- Crea utente non root ---
+RUN useradd -m mcpuser
+USER mcpuser
+WORKDIR /app
+
+# --- Aggiunge la CLI di pip user al PATH ---
+ENV PATH=/home/mcpuser/.local/bin:$PATH
+
+# --- Crea comunque la directory vendor/mcp-core ---
+RUN mkdir -p /app/vendor
+# --- Copia solo i file di build necessari prima del codice (layer caching) ---
+COPY --chown=mcpuser:mcpuser vendor/ /app/vendor/
+
+# --- Build e installazione wheel del progetto locale o da Git ---
+RUN if [ -d "vendor/mcp-core" ]; then \
+        echo "=== Installo mcp-core locale ===" && \
+        python -m pip install --no-cache-dir --user --upgrade --editable vendor/mcp-core; \
+    else \
+        echo "=== Installo mcp-core da Bitbucket ===" && \
+        python -m pip install --no-cache-dir --user --upgrade git+https://github.com/bitmarte/mcp-core@main; \
+    fi
+
+# --- Copia strumenti e .env solo dopo l'installazione ---
+COPY --chown=mcpuser:mcpuser tools/ /app/tools/
+COPY --chown=mcpuser:mcpuser .env /app/
+
+# --- Porta esposta ---
+EXPOSE {{ port }}
+
+# --- Comando di default ---
+CMD ["mcp-core"]

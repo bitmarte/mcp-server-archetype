@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+
+# Usa il nome del folder come IMAGE_NAME se non specificato
+IMAGE_NAME="${IMAGE_NAME:-$(basename "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")}"
+TAG="${TAG:-latest}"
+
+# Se viene passato l'argomento "local-core", copia mcp-core nella cartella vendor/
+if [[ "$1" == "local-core" ]]; then
+    echo "=== Modalità sviluppo locale: includo mcp-core dal percorso ../mcp-core ==="
+    mkdir -p vendor
+    rm -rf vendor/mcp-core
+    cp -r ../mcp-core vendor/mcp-core
+else
+    echo "=== Modalità standard: userò mcp-core da repository remoto ==="
+    rm -rf vendor/mcp-core 2>/dev/null || true
+fi
+
+echo "=== Build container ${IMAGE_NAME}:${TAG} ==="
+podman build -t "${IMAGE_NAME}:${TAG}" .
+
+echo "=== Build completata con successo ==="

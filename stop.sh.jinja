@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+
+# Usa il nome del folder come IMAGE_NAME se non specificato
+IMAGE_NAME="${IMAGE_NAME:-$(basename "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")}"
+TAG="${TAG:-latest}"
+
+CONTAINER_ID=$(podman ps -q --filter ancestor=${IMAGE_NAME}:${TAG})
+
+if [ -z "$CONTAINER_ID" ]; then
+    echo "Nessun container attivo trovato per ${IMAGE_NAME}:${TAG}"
+    exit 0
+fi
+
+echo "=== Stop container ${CONTAINER_ID} ==="
+podman stop $CONTAINER_ID

@@ -1,0 +1,30 @@
+# copier.yaml
+instance_name:
+  type: str
+  question: "Nome dell'istanza MCP Server?"
+  default: "My First MCP Server"
+
+log_level:
+  type: str
+  question: "Livello di log?"
+  choices:
+    - "INFO"
+    - "DEBUG"
+    - "WARNING"
+    - "ERROR"
+  default: "INFO"
+
+host:
+  type: str
+  question: "Host su cui girerà il server MCP?"
+  default: "0.0.0.0"
+
+port:
+  type: int
+  question: "Porta del server MCP?"
+  default: 8000
+
+path:
+  type: str
+  question: "Path per il server MCP (lasciare default se non necessario)"
+  default: "/mcp"
