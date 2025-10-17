@@ -5,10 +5,12 @@ set -e
 IMAGE_NAME="${IMAGE_NAME:-$(basename "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")}"
 TAG="${TAG:-latest}"
 
+# creo il folder localmente per essere eventualmente pronto alla dipendenza da locale del core e non far rompere poi il Containerfile
+mkdir -p vendor
+
 # Se viene passato l'argomento "local-core", copia mcp-core nella cartella vendor/
 if [[ "$1" == "local-core" ]]; then
     echo "=== Modalità sviluppo locale: includo mcp-core dal percorso ../mcp-core ==="
-    mkdir -p vendor
     rm -rf vendor/mcp-core
     cp -r ../mcp-core vendor/mcp-core
 else
