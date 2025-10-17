@@ -29,6 +29,7 @@ RUN mkdir -p /app/vendor
 COPY --chown=mcpuser:mcpuser vendor/ /app/vendor/
 
 ARG MCP_CORE_LAST_COMMIT=main
+ENV MCP_CORE_LAST_COMMIT=${MCP_CORE_LAST_COMMIT}
 # --- Build e installazione wheel del progetto locale o da Git ---
 RUN if [ -d "vendor/mcp-core" ]; then \
         echo "=== Installo mcp-core locale ===" && \
