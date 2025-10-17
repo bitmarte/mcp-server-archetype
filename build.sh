@@ -20,6 +20,8 @@ else
     # Recupero hash dell'ultimo commit del branch main
     MCP_HASH=$(git ls-remote https://github.com/bitmarte/mcp-core.git HEAD | cut -f1)
     echo "Ultimo commit mcp-core: $MCP_HASH"
+    # Scrivo l'hash in un file che Docker copierà
+    echo $MCP_HASH > vendor/mcp-core_remote_last-commit.txt
 fi
 
 echo "=== Build container ${IMAGE_NAME}:${TAG} ==="

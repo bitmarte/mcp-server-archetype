@@ -28,15 +28,17 @@ RUN mkdir -p /app/vendor
 # --- Copia solo i file di build necessari prima del codice (layer caching) ---
 COPY --chown=mcpuser:mcpuser vendor/ /app/vendor/
 
-ARG MCP_CORE_LAST_COMMIT=main
-ENV MCP_CORE_LAST_COMMIT=${MCP_CORE_LAST_COMMIT}
+# Copio il file con l'hash
+COPY --chown=mcpuser:mcpuser vendor/mcp-core_remote_last-commit.txt /tmp/mcp-core_remote_last-commit.txt
+
 # --- Build e installazione wheel del progetto locale o da Git ---
 RUN if [ -d "vendor/mcp-core" ]; then \
         echo "=== Installo mcp-core locale ===" && \
         python -m pip install --no-cache-dir --user --upgrade --editable vendor/mcp-core; \
     else \
+        MCP_HASH=$(cat /tmp/mcp-core_remote_last-commit.txt) && \
         echo "=== Installo mcp-core da GitHub commit $MCP_HASH ===" && \
-        python -m pip install --no-cache-dir --user --upgrade git+https://github.com/bitmarte/mcp-core@$MCP_CORE_LAST_COMMIT; \
+        python -m pip install --no-cache-dir --user --upgrade git+https://github.com/bitmarte/mcp-core@$MCP_HASH; \
     fi
 
 # --- Copia strumenti e .env solo dopo l'installazione ---
