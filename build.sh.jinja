@@ -8,8 +8,6 @@ TAG="${TAG:-latest}"
 # creo il folder localmente per essere eventualmente pronto alla dipendenza da locale del core e non far rompere poi il Containerfile
 mkdir -p vendor
 
-FORCE_REINSTALL_MCPCORE=""
-
 # Se viene passato l'argomento "local-core", copia mcp-core nella cartella vendor/
 if [[ "$1" == "local-core" ]]; then
     echo "=== Modalità sviluppo locale: includo mcp-core dal percorso ../mcp-core ==="
@@ -17,9 +15,6 @@ if [[ "$1" == "local-core" ]]; then
     cp -r ../mcp-core vendor/mcp-core
 else
     echo "=== Modalità standard: userò mcp-core da repository remoto ==="
-    if [[ "$2" == "force-reinstall-mcp-core" ]]; then
-        FORCE_REINSTALL_MCPCORE="--build-arg FORCE_REINSTALL_MCPCORE=1"
-    fi
     rm -rf vendor/mcp-core 2>/dev/null || true
 fi
 

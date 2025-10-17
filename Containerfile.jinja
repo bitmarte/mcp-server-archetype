@@ -29,13 +29,12 @@ RUN mkdir -p /app/vendor
 COPY --chown=mcpuser:mcpuser vendor/ /app/vendor/
 
 # --- Build e installazione wheel del progetto locale o da Git ---
-ARG FORCE_REINSTALL_MCPCORE=0
 RUN if [ -d "vendor/mcp-core" ]; then \
         echo "=== Installo mcp-core locale ===" && \
         python -m pip install --no-cache-dir --user --upgrade --editable vendor/mcp-core; \
     else \
         echo "=== Installo mcp-core da github ===" && \
-        python -m pip install --no-cache-dir --user --upgrade $( [ "$FORCE_REINSTALL_MCPCORE" -eq 1 ] && echo "--force-reinstall" ) git+https://github.com/bitmarte/mcp-core@main; \
+        python -m pip install --no-cache-dir --user --upgrade --force-reinstall git+https://github.com/bitmarte/mcp-core@main; \
     fi
 
 # --- Copia strumenti e .env solo dopo l'installazione ---
