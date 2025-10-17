@@ -1,4 +1,3 @@
-# copier.yaml
 instance_name:
   type: str
   question: "Nome dell'istanza MCP Server?"
@@ -28,3 +27,6 @@ path:
   type: str
   question: "Path per il server MCP (lasciare default se non necessario)"
   default: "/mcp"
+
+_exclude:
+  - readme.md
