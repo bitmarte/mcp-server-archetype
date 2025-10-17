@@ -16,9 +16,15 @@ if [[ "$1" == "local-core" ]]; then
 else
     echo "=== Modalità standard: userò mcp-core da repository remoto ==="
     rm -rf vendor/mcp-core 2>/dev/null || true
+
+    # Recupero hash dell'ultimo commit del branch main
+    MCP_HASH=$(git ls-remote https://github.com/bitmarte/mcp-core.git HEAD | cut -f1)
+    echo "Ultimo commit mcp-core: $MCP_HASH"
 fi
 
 echo "=== Build container ${IMAGE_NAME}:${TAG} ==="
-podman build -t "${IMAGE_NAME}:${TAG}" .
+podman build \
+    --build-arg MCP_CORE_LAST_COMMIT=${MCP_HASH:-main} \
+    -t "${IMAGE_NAME}:${TAG}" .
 
 echo "=== Build completata con successo ==="
