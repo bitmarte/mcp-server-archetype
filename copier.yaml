@@ -28,13 +28,8 @@ path:
   question: "Path per il server MCP (lasciare default se non necessario)"
   default: "/mcp"
 
-# Escludi solo il readme del template, non quello generato
 _exclude:
-  - readme.md                 # <-- quello del template
-  - readme-template.md.jinja  # <-- impedisce copia diretta del sorgente jinja
+  - readme.md
 
-# Mappa il template Jinja al file finale nel progetto figlio
-_templates:
-  readme.md:
-    _template: readme-template.md.jinja
-    _skip_if_exists: true
+_skip_if_exists:
+  - readme.md
