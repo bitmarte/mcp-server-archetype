@@ -28,8 +28,5 @@ path:
   question: "Path per il server MCP (lasciare default se non necessario)"
   default: "/mcp"
 
-_exclude:
-  - readme.md
-
 _skip_if_exists:
-  - readme.md
+    - readme.md
