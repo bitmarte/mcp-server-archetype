@@ -30,3 +30,8 @@ path:
 
 _exclude:
   - readme.md
+
+_templates:
+  readme.md:
+    _template: readme-template.md.jinja
+    _skip_if_exists: true
