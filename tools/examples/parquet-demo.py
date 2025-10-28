@@ -37,10 +37,10 @@ def get_unique_column_values(column_name: str, limit: Optional[int] = None) -> l
     logger = core_api.logger
     safe_limit = get_limit(default=100, max_allowed=1000, user_limit=limit)
     
-    sql = f'SELECT DISTINCT "{column_name}" FROM read_parquet("{ALIAS_DEMO}") LIMIT {safe_limit}'
+    sql = f'SELECT DISTINCT "{column_name}" FROM read_parquet("{parquet_helper.get_path(ALIAS_DEMO)}") LIMIT {safe_limit}'
     
     try:
-        df = parquet_helper.query(sql=sql, alias=ALIAS_DEMO)
+        df = parquet_helper.query(sql=sql)
         records = df.to_dict(orient="records")
         logger.info(f"get_unique_column_values: restituiti {len(records)} record per colonna '{column_name}'")
         return records
