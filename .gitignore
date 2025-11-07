@@ -99,3 +99,8 @@ podman-compose.override.yml
 # librerie non pubblicate, utile per test locali
 # -------------------------------
 vendor/
+
+# -------------------------------
+# file dove c'è l'hash del commit bloccato per l'mcp-core remoto
+# -------------------------------
+mcp-core_remote_last-commit.txt
