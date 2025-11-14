@@ -1,34 +1,14 @@
 # MCP Server Archetype
 
 **MCP Server Archetype** è un template base per creare nuovi MCP Server figli utilizzando [Copier](https://copier.readthedocs.io/).  
-Include la struttura minima necessaria per avviare un server MCP modulare con FastMCP, caricare tools e gestire configurazioni, container e script di avvio.
+Include la struttura minima necessaria per avviare un server MCP modulare con FastMCP, caricare tools e gestire configurazioni, container e script di build/start/stop.
 
 ## Pre-requisiti
 
 Per partire con mcp-server-archetype, i requisiti minimi sono:
 
-- `Python 3.11+` → necessario per eseguire il codice MCP Core e FastMCP.
 - `Podman` → per buildare e avviare il container.
 - `Copier` → per generare server figli dal template.
-- `pip` → per installare le dipendenze Python.
-
-## Struttura del template
-
-```
-./
-├── .env.jinja
-├── .gitignore
-├── Containerfile.jinja
-├── build.sh.jinja
-├── copier.yaml
-├── readme.md
-├── requirements.txt
-├── start.sh.jinja
-├── stop.sh.jinja
-└── tools/
-    └── default/
-        └── health_check.py
-```
 
 ## Funzionamento
 
@@ -37,44 +17,21 @@ Questo template è pensato per:
 1. Fornire una base pronta all’uso per tutti i server MCP figli.
 2. Gestire la configurazione tramite `.env`.
 3. Caricare dinamicamente i tools Python.
-4. Consentire la creazione di container personalizzati tramite template Jinja (`Containerfile.jinja`, `build.sh.jinja`).
 
 ### Tools
 
-- La cartella `tools/` contiene già un tool di esempio `health_check.py`.
-- I nuovi tools possono essere aggiunti nelle sottocartelle di `tools/`.
-- Tutti i tools devono usare l’istanza globale `core_api` e il decoratore `@core_api.mcp.tool`.
+- La cartella `tools/default` contiene già i tools di default del protocollo es.(`health_check.py`) con una implementazione fake.
+- La cartella `tools/examples` contiene dei tools di esempio che però non vengono caricati dal server mcp; sono solo esempi da consultare.
 
-Esempio:
+Esempio di un tools:
 
 ```python
-# tools/default/health_check.py
 from mcp_core.core import core_api
 
 @core_api.mcp.tool
 def health_check() -> dict:
     core_api.logger.info("Eseguo health_check")
     return {"status": "ok"}
-```
-
-### Configurazione con Copier
-
-Il file `copier.yaml` definisce:
-
-- Nome e descrizione del progetto generato.
-- Variabili interattive per personalizzare il server (porta, nome, path, ecc.).
-- Template per file .env, Containerfile e script di avvio.
-
-Esempio di comando per creare un nuovo server prendendo il core da Github:
-
-```
-copier copy gh:bitmarte/mcp-server-archetype my-new-mcp-server
-```
-
-Esempio di comando per creare un nuovo server prendendo il core da locale (repo clonato):
-
-```
-copier copy ./mcp-server-archetype my-new-mcp-server
 ```
 
 ### Avvio del server
@@ -85,6 +42,18 @@ Dopo aver generato il server figlio:
 - Costruisci il container: `./build.sh`
 - Avvia il server in container: `./start.sh`
 - Ferma il container (se avviato con detached=true): `./stop.sh`
+
+#### Build
+
+La build può essere lanciata nei seguenti modi:
+- `./build.sh --local-mcpcore` → presuppone di avere il repo `mcp-core` a livello fratello dell'archetipo e usarà lui come modulo mcp-core, utile per lo sviluppo locale del core stesso
+- `./build.sh` → scarica `mcp-core` dal repo github come dipendenza e ne congela la versione remota per le future build
+- `./build.sh --force-remote-mcpcore-update` → scarica `mcp-core` dal repo github come dipendenza ignorando la versione precedentemente scaricata e ne congela la nuova versione remota per le future build
+
+#### Start
+Lo start può essere invocato nei seguenti modi:
+- `./start.sh` → avvia il server restando appeso per la consultazione live dei log
+- `./start.sh --detached` → avvia il server in modalità detached e quindi occorrerà lanciare `./stop.sh` per fermarlo
 
 ### Template Jinja
 

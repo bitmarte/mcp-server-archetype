@@ -12,3 +12,23 @@ Istruzioni da aggiungere.
 
 ...
 
+### Avvio del server
+
+Dopo aver generato il server figlio:
+
+- Configura l’ambiente .env.
+- Costruisci il container: `./build.sh`
+- Avvia il server in container: `./start.sh`
+- Ferma il container (se avviato con detached=true): `./stop.sh`
+
+#### Build
+
+La build può essere lanciata nei seguenti modi:
+- `./build.sh --local-mcpcore` → presuppone di avere il repo `mcp-core` a livello fratello dell'archetipo e usarà lui come modulo mcp-core, utile per lo sviluppo locale del core stesso
+- `./build.sh` → scarica `mcp-core` dal repo github come dipendenza e ne congela la versione remota per le future build
+- `./build.sh --force-remote-mcpcore-update` → scarica `mcp-core` dal repo github come dipendenza ignorando la versione precedentemente scaricata e ne congela la nuova versione remota per le future build
+
+#### Start
+Lo start può essere invocato nei seguenti modi:
+- `./start.sh` → avvia il server restando appeso per la consultazione live dei log
+- `./start.sh --detached` → avvia il server in modalità detached e quindi occorrerà lanciare `./stop.sh` per fermarlo

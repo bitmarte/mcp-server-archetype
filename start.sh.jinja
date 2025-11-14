@@ -7,12 +7,11 @@ IMAGE_NAME="${IMAGE_NAME:-$(echo "$RAW_IMAGE_NAME" | tr '[:upper:]' '[:lower:]' 
 
 TAG="${TAG:-latest}"
 PORT="${PORT:-{{ port }}}"
-DETACHED="${DETACHED:-false}"
 
 # --- Costruzione comando podman ---
 RUN_CMD="podman run --rm -p ${PORT}:${PORT} -v $(pwd)/tools:/app/tools"
 
-if [ "$DETACHED" = "true" ]; then
+if [[ "$1" == "--detached" ]]; then
     RUN_CMD="$RUN_CMD -d"
 fi
 

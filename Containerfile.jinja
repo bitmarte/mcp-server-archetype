@@ -29,7 +29,7 @@ RUN mkdir -p /app/vendor
 COPY --chown=mcpuser:mcpuser vendor/ /app/vendor/
 
 # Copio il file con l'hash
-COPY --chown=mcpuser:mcpuser mcp-core_remote_last-commit.txt /tmp/mcp-core_remote_last-commit.txt
+COPY --chown=mcpuser:mcpuser .mcp-core_remote_tag /tmp/.mcp-core_remote_tag
 
 # --- Build e installazione wheel del progetto locale o da Git ---
 RUN if [ -d "vendor/mcp-core" ]; then \
@@ -38,8 +38,8 @@ RUN if [ -d "vendor/mcp-core" ]; then \
     else \
         echo "=== Installo mcp-core da GitHub" && \
         # Leggo eventuale commit hash salvato
-        if [ -f /tmp/mcp-core_remote_last-commit.txt ]; then \
-            MCP_HASH=$(cat /tmp/mcp-core_remote_last-commit.txt | tr -d '\r\n'); \
+        if [ -f /tmp/.mcp-core_remote_tag ]; then \
+            MCP_HASH=$(cat /tmp/.mcp-core_remote_tag | tr -d '\r\n'); \
         else \
             MCP_HASH=""; \
         fi; \
@@ -50,8 +50,8 @@ RUN if [ -d "vendor/mcp-core" ]; then \
             python -m pip install --no-cache-dir --user --upgrade git+https://github.com/bitmarte/mcp-core@main; \
             # Recupero hash effettivo del master appena installato
             MCP_HASH=$(git ls-remote https://github.com/bitmarte/mcp-core.git refs/heads/master | awk '{print $1}'); \
-            echo "$MCP_HASH" > /tmp/mcp-core_remote_last-commit.txt; \
-            echo "=== Salvato commit $MCP_HASH in /tmp/mcp-core_remote_last-commit.txt ==="; \
+            echo "$MCP_HASH" > /tmp/.mcp-core_remote_tag; \
+            echo "=== Salvato commit $MCP_HASH in /tmp/.mcp-core_remote_tag ==="; \
         else \
             echo "=== Installo mcp-core da GitHub commit $MCP_HASH ==="; \
             python -m pip install --no-cache-dir --user --upgrade git+https://github.com/bitmarte/mcp-core@$MCP_HASH; \
